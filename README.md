@@ -90,15 +90,14 @@ The timing includes:
 - Checking missing values and duplicates
 - Filtering the data
 - Grouping and aggregating the data
-Result: In the test run, Pandas was faster than Polars for the selected operations. This result should be interpreted only for this dataset and these operations. Performance can vary depending on dataset size, operations, hardware, and other factors. 
+- Result: In the test run, Pandas was faster than Polars for the selected operations. This result should be interpreted only for this dataset and these operations. Performance can vary depending on dataset size, operations, hardware, and other factors. 
 
 ## Files
-IDS706-Assignment2/
-│
-├── assignment2.py
-├── README.md
-├── saas.csv
-└── rust_ownership.ipynb
+- IDS706-Assignment2
+    - assignment2.py
+    - README.md
+    - saas.csv
+    - rust_ownership.ipynb
 ### assignment2.py
 Contains the main Python data analysis, Pandas and Polars comparison, Linear Regression model, visualization, and performance timing.
 ### saas.csv
@@ -112,6 +111,6 @@ Contains the Rust Jupyter notebook used to experiment with Rust ownership and mu
     - The repository contains both the Python analysis and the Rust Jupyter notebook.
 - Install the required Python libraries: 
     - python3 -m pip install pandas polars numpy scikit-learn matplotlib
-- Run the Python script:python3 assignment2.py
+- Run the Python script: python3 assignment2.py
 - Open the Rust Jupyter notebook in VS Code or Jupyter and select the Rust Jupyter kernel.
 - Run the notebook cells to reproduce the Rust ownership and mutability experiments.
