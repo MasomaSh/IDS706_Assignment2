@@ -49,13 +49,13 @@ This project was developed and tested on macOS and requires:
 - A Rust Jupyter kernel for running the Rust notebook
 - Git
 ### Python Setup
-- Check that a higher version of Python is installed: python3 --version
-- Python 3.11 or newer is recommended.
+- Check that a higher version of Python is installed: 
+     Python 3.11 or newer is recommended.
 - Install the required Python libraries:
     python3 -m pip install pandas polars numpy scikit-learn matplotlib jupyter
 
 ### Rust Setup
-Rust is required for Question 2, which involves running and modifying the Rust Jupyter notebook.
+Rust is required for running and modifying the Rust Jupyter notebook.
 - If Rust is not already installed, install it using rustup:
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 - Open a new terminal after installation and verify Rust:
@@ -65,9 +65,10 @@ Rust is required for Question 2, which involves running and modifying the Rust J
 
 ### Rust Jupyter Kernel
 The Rust notebook requires a Rust Jupyter kernel.
-- From the project directory, install the Rust kernel using: make rust-kernel
+- From the project directory, install the Rust kernel using: 
+    make rust-kernel
 - Alternatively, if the required Rust Jupyter kernel tools are already installed, the kernel can be installed with:
-evcxr_jupyter --install
+    evcxr_jupyter --install
 
 ### VS Code Setup
 - Open the project folder in VS Code.
