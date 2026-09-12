@@ -50,31 +50,31 @@ This project was developed and tested on macOS and requires:
 - Git
 ### Python Setup
 - Check that a higher version of Python is installed: 
-     Python 3.11 or newer is recommended.
+     - Python 3.11 or newer is recommended.
 - Install the required Python libraries:
-    python3 -m pip install pandas polars numpy scikit-learn matplotlib jupyter
+    - python3 -m pip install pandas polars numpy scikit-learn matplotlib jupyter
 
 ### Rust Setup
 Rust is required for running and modifying the Rust Jupyter notebook.
 - If Rust is not already installed, install it using rustup:
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 - Open a new terminal after installation and verify Rust:
-    rustc --version
-    cargo --version
+    - rustc --version
+    - cargo --version
 - Both commands should return the installed Rust and Cargo versions.
 
 ### Rust Jupyter Kernel
 The Rust notebook requires a Rust Jupyter kernel.
 - From the project directory, install the Rust kernel using: 
-    make rust-kernel
+    - make rust-kernel
 - Alternatively, if the required Rust Jupyter kernel tools are already installed, the kernel can be installed with:
-    evcxr_jupyter --install
+    - evcxr_jupyter --install
 
 ### VS Code Setup
 - Open the project folder in VS Code.
 - Install the following VS Code extensions:
-    Python
-    Jupyter
+    - Python
+    - Jupyter
 - Open the Rust notebook and to select the kernel in VS Code:
     - Open the .ipynb file.
     - Click the kernel name at the top of the notebook.
@@ -108,10 +108,10 @@ Contains the Rust Jupyter notebook used to experiment with Rust ownership and mu
 
 ## How to Run
 - Clone the repository and move into the project directory:
-    git clone https://github.com/MasomaSh/IDS706_Assignment2.git
-    The repository contains both the Python analysis and the Rust Jupyter notebook.
+    - git clone https://github.com/MasomaSh/IDS706_Assignment2.git
+    - The repository contains both the Python analysis and the Rust Jupyter notebook.
 - Install the required Python libraries: 
-    python3 -m pip install pandas polars numpy scikit-learn matplotlib
+    - python3 -m pip install pandas polars numpy scikit-learn matplotlib
 - Run the Python script:python3 assignment2.py
 - Open the Rust Jupyter notebook in VS Code or Jupyter and select the Rust Jupyter kernel.
 - Run the notebook cells to reproduce the Rust ownership and mutability experiments.
