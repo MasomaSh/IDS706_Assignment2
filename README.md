@@ -7,18 +7,18 @@ The project also explores a simple Linear Regression model to predict company re
 The dataset used in this project is a SaaS companies dataset obtained from Kaggle.The dataset is stored in saas.csv.
 
 The main columns include:
-Company - Company name
-Industry - Industry of the company
-Region - Geographic region
-Founded_Year - Year the company was founded
-Year - Year of the recorded data
-Revenue_USD - Company revenue in USD
-Expenses_USD - Company expenses in USD
-Profit_USD - Company profit in USD
-Churn_Rate - Customer churn rate
-Customer_Count - Number of customers
-ARPU_USD - Average revenue per user
-Market_Share_Percent - Company market share percentag
+- Company - Company name
+- Industry - Industry of the company
+- Region - Geographic region
+- Founded_Year - Year the company was founded
+- Year - Year of the recorded data
+- Revenue_USD - Company revenue in USD
+- Expenses_USD - Company expenses in USD
+- Profit_USD - Company profit in USD
+- Churn_Rate - Customer churn rate
+- Customer_Count - Number of customers
+- ARPU_USD - Average revenue per user
+- Market_Share_Percent - Company market share percentag
 
 ## Project Tasks
 The project includes the following data analysis tasks:
