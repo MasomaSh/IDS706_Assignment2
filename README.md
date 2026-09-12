@@ -2,7 +2,7 @@
 
 ## Overview
 This project is part of the IDS706 Data Engineering course. The project performs basic data analysis on a SaaS companies dataset using Pandas and Polars. The same analysis is performed with both libraries to compare their syntax and execution time.
-The project also explores a simple Linear Regression model to predict company revenue based on expenses. A scatter plot and trend line are used to visualize the relationship between expenses and revenue.
+The project also explores a simple Linear Regression model to predict company revenue based on expenses. A scatter plot and trend line are used to visualize the relationship between expenses and revenue. Moreover, the project includes Rust ownership experiments to explore concepts such as immutability, mutability, ownership, and borrowing.
 ## Dataset
 The dataset used in this project is a SaaS companies dataset obtained from Kaggle.The dataset is stored in saas.csv.
 
