@@ -1,210 +1,232 @@
 
 
-import pandas as pd
-from sklearn.linear_model import LinearRegression 
-import matplotlib.pyplot as plt
-import numpy as np
-import polars as pl
+"""
+Customer Churn Analysis: Polars vs. Pandas
+
+Question we want to answer with the ML model:
+Can we predict whether a customer will churn (leave the bank) based on
+their profile - age, balance, activity level, number of products, etc.?
+
+We use a Decision Tree Classifier since the target is a yes/no outcome
+(churned or not)
+"""
+
 import time
+import pandas as pd
+import polars as pl
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+DATA_PATH = "Churn_Modelling.csv"
 
 
+# ---------------------------------------------------------------------------
+# Data inspection
+# ---------------------------------------------------------------------------
 
-start_polars = time.perf_counter() # start timing the Polars analysis
-df_pl = pl.read_csv("saas.csv")   # Dataset Selection & Import
-
-# Data Inspection with Polars
-print("\nNumber of rows:", df_pl.shape[0])
-print("Number of columns:", df_pl.shape[1])
-print(df_pl.head())
-print(df_pl.schema)
-
-# Summary statistics with Polars
-print("\nSummary statistics:")
-print(df_pl.describe())
-print(f"Number of null values:\n{df_pl.null_count()}")
-print(f"Number of duplicate rows: {df_pl.is_duplicated().sum()}")
-
-# Basic Filtering with Polars
-print("=== Basic Filters ===")
-filtered_data = df_pl.filter(pl.col("Profit_USD") > 50861747)
-print(f"Records with profit greater than 50861747: {filtered_data.height}")
-print(filtered_data.select(["Company", "Region"]))
-
-# Group by and Aggregation with Polars
-
-# calculates the average profit for each industry
-grouped = df_pl.group_by("Industry")
-industry_profit = grouped.agg(pl.col("Profit_USD").mean().alias("avg_profit"))
-print(f"Average profit by industry:\n{industry_profit}")
-
-# calculates the total profit for each industry
-industry_profit = df_pl.group_by("Industry").agg(
-    pl.col("Profit_USD").sum().alias("total_profit"))
-print(f"Total profit by industry:\n{industry_profit}")
-
-# Count the number of companies in each industry
-industry_count = df_pl.group_by("Industry").agg(
-    pl.col("Company").count().alias("company_count"))
-print(f"Number of companies by industry:\n{industry_count}")
-
-# calculates and displays the total Polars analysis time
-end_polars = time.perf_counter()
-polars_time = end_polars - start_polars
-print(f"Polars analysis time: {polars_time:.6f} seconds")
+def inspect_polars(df):
+    print(f"\nNumber of rows: {df.shape[0]}")
+    print(f"Number of columns: {df.shape[1]}")
+    print(df.head())
+    print(df.schema)
+    print("\nSummary statistics:")
+    print(df.describe())
+    print(f"Number of null values:\n{df.null_count()}")
+    print(f"Number of duplicate rows: {df.is_duplicated().sum()}")
 
 
+def inspect_pandas(df):
 
-# Predict revenue based on expenses using Linear Regression with Polars and sklearn
-
-print("=== Linear Regression ===")
-
-# select expenses as the input feature
-X_pl = df_pl.select("Expenses_USD")
-X = X_pl.to_numpy()
-
-# select revenue as the target variable
-y_pl = df_pl.select("Revenue_USD")
-y = y_pl.to_numpy().ravel()
-
-# create and train the Linear Regression model
-model = LinearRegression()
-model.fit(X, y)
-# generate revenue predictions using the trained model
-predictions = model.predict(X)
-print("First 5 predicted revenues:")
-print(predictions[:5])
+    print(f"\nNumber of rows: {df.shape[0]}")
+    print(f"Number of columns: {df.shape[1]}")
+    print(df.head())
+    print(df.info())
+    print("\nSummary statistics:")
+    print(df.describe())
+    print(f"Number of null values:\n{df.isnull().sum()}")
+    print(f"Number of duplicate rows: {df.duplicated().sum()}")
 
 
-# Visualization with Matplotlib 
+# ---------------------------------------------------------------------------
+# Filtering
+# ---------------------------------------------------------------------------
 
-# convert expenses and revenue to NumPy arrays for plotting
-expenses = df_pl["Expenses_USD"].to_numpy()
-revenue = df_pl["Revenue_USD"].to_numpy()
+def filter_high_balance_polars(df, threshold):
+    """Returns customers whose account balance exceeds the given threshold."""
 
-fig, ax = plt.subplots(figsize=(8, 6))
-# plots expenses against revenue
-ax.scatter(expenses, revenue, alpha=0.15, s=10, edgecolors='none')
-
-# calculates a linear trend line
-z = np.polyfit(expenses, revenue, 1)
-# create x-values for the trend line
-x_line = np.linspace(expenses.min(), expenses.max(), 100)
-
-# plots the trend line on top of the data
-ax.plot(x_line, np.polyval(z, x_line), color='red', linewidth=2, label=f'Trend (slope={z[0]:.2f})')
-
-# calculates the correlation between expenses and revenue
-corr = df_pl.select(pl.corr("Expenses_USD", "Revenue_USD")).item()
-
-# adds labels and title to the plot
-ax.set_xlabel("Expenses (USD)")
-ax.set_ylabel("Revenue (USD)")
-ax.set_title(f"Expenses vs. Revenue (r = {corr:.3f})")
-ax.legend()
-ax.ticklabel_format(style='plain', axis='both')
-plt.tight_layout()
-plt.show()
+    filtered = df.filter(pl.col("Balance") > threshold)
+    print(f"Customers with balance greater than {threshold}: {filtered.height}")
+    print(filtered.select(["CustomerId", "Geography", "Balance"]))
+    return filtered
 
 
-'''
-USing Pandas for same analysis as above to compare performance and syntax differences
-'''
+def filter_high_balance_pandas(df, threshold):
+    """Returns customers whose account balance exceeds the given threshold."""
+
+    filtered = df[df["Balance"] > threshold]
+    print(f"Customers with balance greater than {threshold}: {len(filtered)}")
+    print(filtered[["CustomerId", "Geography", "Balance"]])
+    return filtered
 
 
-start_pandas = time.perf_counter() # start timing the Pandas analysis
+# ---------------------------------------------------------------------------
+# Group-by / aggregation - churn rate by geography
+# ---------------------------------------------------------------------------
 
-df_pandas = pd.read_csv("saas.csv") # Dataset Selection & Import with Pandas
+def churn_rate_by_geography_polars(df):
 
-# Data Inspection with Pandas
-print("\nNumber of rows:", df_pandas.shape[0])
-print("Number of columns:", df_pandas.shape[1])
-print(df_pandas.head()) # gets the first 5 rows of the dataframe
-print(df_pandas.info())
-
-# Summary statistics with Pandas
-print("\nSummary statistics:")
-print(df_pandas.describe())
-print(f"Number of null values:\n{df_pandas.isnull().sum()}")
-print("\nData information:")
-df_pandas.info()
-print(f"Number of duplicate rows: {df_pandas.duplicated().sum()}")
-
-# Basic Filtering with Pandas
-print("=== Basic Filters ===")
-
-filtered_data = df_pandas[df_pandas["Profit_USD"] > 50861747]
-print(f"Records with profit greater than 50861747: {len(filtered_data)}")
-print(filtered_data[["Company", "Region"]])
-
-# Group by and Aggregation with Pandas
-
-# the average profit for companies in each industry
-industry_profit = df_pandas.groupby("Industry")["Profit_USD"].mean()
-print(f"Average profit by industry:\n{industry_profit}")
-
-# calculates the total profit for each industry
-industry_profit = df_pandas.groupby("Industry")["Profit_USD"].sum()
-print(f"Total profit by industry:\n{industry_profit}")
-
-# counts the number of companies in each industry
-industry_count = df_pandas.groupby("Industry")["Company"].count()
-print(f"Number of companies by industry:\n{industry_count}")
-
-# calculates profit summary statistics for each industry
-industry_profit = df_pandas.groupby("Industry")["Profit_USD"].agg(
-    ["count", "sum", "min", "max"] )
-print(f"Profit summary by industry:\n{industry_profit}")
+    """ computes customer count and churn rate for each geography, Polars."""
+    result = df.group_by("Geography").agg([
+        pl.col("CustomerId").count().alias("customer_count"),
+        pl.col("Exited").mean().alias("churn_rate"),
+    ]).sort("churn_rate", descending=True)
+    print(f"Churn rate by geography:\n{result}")
+    return result
 
 
-# calculates and displays the total Pandas analysis time
-end_pandas = time.perf_counter()
-pandas_time = end_pandas - start_pandas
-print(f"Pandas analysis time: {pandas_time:.6f} seconds")
+def churn_rate_by_geography_pandas(df):
+    """computes customer count and churn rate for each geography, Pandas."""
+    result = df.groupby("Geography").agg(
+        customer_count=("CustomerId", "count"),
+        churn_rate=("Exited", "mean"),
+    ).sort_values("churn_rate", ascending=False)
+    print(f"Churn rate by geography:\n{result}")
+    return result
+
+# ---------------------------------------------------------------------------
+# Modeling - Decision Tree to predict churn
+# ---------------------------------------------------------------------------
+
+def prepare_features(df):
+
+    """Prepare features and target for modeling."""
+
+    features = df.drop(columns=["RowNumber", "CustomerId", "Surname", "Exited"])
+
+    features = pd.get_dummies(features, columns=["Geography", "Gender"], drop_first=True)
+    target = df["Exited"]
+    return features, target
 
 
-# predict revenue based on expenses
+def train_decision_tree(X, y):
 
-print("=== Linear Regression ===")
+    """Train/test split, fit a Decision Tree, and report simple metrics."""
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
 
-X = df_pandas[["Expenses_USD"]] # selects expenses as the input feature
-y = df_pandas["Revenue_USD"]  # selects revenue as the target variable
+    # max_depth keeps the tree small and easy to read/plot
+    model = DecisionTreeClassifier(max_depth=4, random_state=42)
+    model.fit(X_train, y_train)
 
-# create and train the Linear Regression model
-model = LinearRegression()
-model.fit(X, y)
+    y_pred = model.predict(X_test)
 
-# generates revenue predictions
-predictions = model.predict(X)
-print("First 5 predicted revenues:")
-print(predictions[:5])
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.3f}")
+    print(f"Confusion matrix:\n{confusion_matrix(y_test, y_pred)}")
+    print(f"Classification report:\n{classification_report(y_test, y_pred)}")
+
+    importances = pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)
+    print(f"Feature importances:\n{importances}")
+
+    return model, X_test, y_test, importances
 
 
+# ---------------------------------------------------------------------------
 # Visualization
-fig, ax = plt.subplots(figsize=(8, 6))
-# Transparent an small markers so overlapping points show density 
-ax.scatter(df_pandas["Expenses_USD"], df_pandas["Revenue_USD"], 
-           alpha=0.15, s=10, edgecolors='none')
+# ---------------------------------------------------------------------------
 
-# add a trend line for relationship strength 
-z = np.polyfit(df_pandas["Expenses_USD"], df_pandas["Revenue_USD"], 1)
-# create x-values for the trend line
-x_line = np.linspace(df_pandas["Expenses_USD"].min(), df_pandas["Expenses_USD"].max(), 100)
-# plots the trend line on top of the data
-ax.plot(x_line, np.polyval(z, x_line), color='red', linewidth=2, label=f'Trend (slope={z[0]:.2f})')
+def plot_churn_by_age(df, save_path="churn_by_age.png"):
+    """Bar chart of churn rate by age bucket - shows who churns most."""
+    bins = [18, 30, 40, 50, 60, 100]
+    labels = ["18-29", "30-39", "40-49", "50-59", "60+"]
+    age_group = pd.cut(df["Age"], bins=bins, labels=labels, right=False)
+    churn_by_age = df.groupby(age_group, observed=True)["Exited"].mean()
 
-# calculate the correlation between expenses and revenue to check how strongly expenses and revenue are related
-corr = df_pandas["Expenses_USD"].corr(df_pandas["Revenue_USD"])
-ax.set_xlabel("Expenses (USD)")
-ax.set_ylabel("Revenue (USD)")
-ax.set_title(f"Expenses vs. Revenue (r = {corr:.3f})")
-ax.legend()
-ax.ticklabel_format(style='plain', axis='both')  # format the axis numbers normally
-plt.tight_layout()
-plt.show()
-
-# display the execution time for each library
-print("\n=== Performance Comparison ===")
-print(f"Polars: {polars_time:.6f} seconds")
-print(f"Pandas: {pandas_time:.6f} seconds")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.bar(churn_by_age.index.astype(str), churn_by_age.values, color="steelblue")
+    ax.set_xlabel("Age Group")
+    ax.set_ylabel("Churn Rate")
+    ax.set_title("Churn Rate by Age Group")
+    ax.set_ylim(0, churn_by_age.values.max() * 1.2)
+    for i, v in enumerate(churn_by_age.values):
+        ax.text(i, v + 0.01, f"{v:.1%}", ha="center")
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {save_path}")
 
 
+
+def plot_decision_tree(model, feature_names, save_path="decision_tree.png"):
+    """Draw the actual tree so you can see the yes/no questions it asks."""
+
+    fig, ax = plt.subplots(figsize=(20, 10))
+    plot_tree(
+        model,
+        feature_names=feature_names,
+        class_names=["Stayed", "Churned"],
+        filled=True,
+        rounded=True,
+        fontsize=8,
+        ax=ax,
+    )
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {save_path}")
+
+
+# ---------------------------------------------------------------------------
+# Performance comparison
+# ---------------------------------------------------------------------------
+
+def run_polars_pipeline(path):
+
+    """Run the full EDA/filter/group-by pipeline with Polars; return elapsed time."""
+
+    start = time.perf_counter()
+    df_pl = pl.read_csv(path)
+    inspect_polars(df_pl)
+    filter_high_balance_polars(df_pl, threshold=150000)
+    churn_rate_by_geography_polars(df_pl)
+    elapsed = time.perf_counter() - start
+    print(f"Polars pipeline time: {elapsed:.6f} seconds")
+    return elapsed
+
+
+def run_pandas_pipeline(path):
+
+    """Run the full EDA/filter/group-by pipeline with Pandas; return elapsed time and df."""
+    start = time.perf_counter()
+    df_pd = pd.read_csv(path)
+    inspect_pandas(df_pd)
+    filter_high_balance_pandas(df_pd, threshold=150000)
+    churn_rate_by_geography_pandas(df_pd)
+    elapsed = time.perf_counter() - start
+    print(f"Pandas pipeline time: {elapsed:.6f} seconds")
+    return elapsed, df_pd
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    polars_time = run_polars_pipeline(DATA_PATH)
+    pandas_time, df_pandas = run_pandas_pipeline(DATA_PATH)
+  
+
+    print("\n=== Decision Tree: Predicting Churn ===")
+    X, y = prepare_features(df_pandas)
+    model, X_test, y_test, importances = train_decision_tree(X, y)
+
+    print("\n=== Visualizations ===")
+    plot_churn_by_age(df_pandas)
+    plot_decision_tree(model, X.columns)
+
+
+if __name__ == "__main__":
+    main()
