@@ -54,7 +54,8 @@ def inspect_pandas(df):
 # ---------------------------------------------------------------------------
 
 def filter_high_balance_polars(df, threshold):
-    """Returns customers whose account balance exceeds the given threshold."""
+
+    # Returns customers whose account balance exceeds the given threshold.
 
     filtered = df.filter(pl.col("Balance") > threshold)
     print(f"Customers with balance greater than {threshold}: {filtered.height}")
@@ -63,7 +64,7 @@ def filter_high_balance_polars(df, threshold):
 
 
 def filter_high_balance_pandas(df, threshold):
-    """Returns customers whose account balance exceeds the given threshold."""
+    # Returns customers whose account balance exceeds the given threshold 
 
     filtered = df[df["Balance"] > threshold]
     print(f"Customers with balance greater than {threshold}: {len(filtered)}")
@@ -77,7 +78,7 @@ def filter_high_balance_pandas(df, threshold):
 
 def churn_rate_by_geography_polars(df):
 
-    """ computes customer count and churn rate for each geography, Polars."""
+    # computes customer count and churn rate for each geography, Polars
     result = df.group_by("Geography").agg([
         pl.col("CustomerId").count().alias("customer_count"),
         pl.col("Exited").mean().alias("churn_rate"),
@@ -87,7 +88,7 @@ def churn_rate_by_geography_polars(df):
 
 
 def churn_rate_by_geography_pandas(df):
-    """computes customer count and churn rate for each geography, Pandas."""
+    # computes customer count and churn rate for each geography, Pandas
     result = df.groupby("Geography").agg(
         customer_count=("CustomerId", "count"),
         churn_rate=("Exited", "mean"),
@@ -101,7 +102,7 @@ def churn_rate_by_geography_pandas(df):
 
 def prepare_features(df):
 
-    """Prepare features and target for modeling."""
+    # Prepare features and target for modeling 
 
     features = df.drop(columns=["RowNumber", "CustomerId", "Surname", "Exited"])
 
@@ -112,7 +113,7 @@ def prepare_features(df):
 
 def train_decision_tree(X, y):
 
-    """Train/test split, fit a Decision Tree, and report simple metrics."""
+    # Train/test split, fit a Decision Tree, and report simple metrics 
     
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
@@ -139,7 +140,8 @@ def train_decision_tree(X, y):
 # ---------------------------------------------------------------------------
 
 def plot_churn_by_age(df, save_path="churn_by_age.png"):
-    """Bar chart of churn rate by age bucket - shows who churns most."""
+
+    # Bar chart of churn rate by age bucket - shows who churns most
     bins = [18, 30, 40, 50, 60, 100]
     labels = ["18-29", "30-39", "40-49", "50-59", "60+"]
     age_group = pd.cut(df["Age"], bins=bins, labels=labels, right=False)
@@ -161,7 +163,8 @@ def plot_churn_by_age(df, save_path="churn_by_age.png"):
 
 
 def plot_decision_tree(model, feature_names, save_path="decision_tree.png"):
-    """Draw the actual tree so you can see the yes/no questions it asks."""
+
+    # Draw the actual tree so you can see the yes/no questions it asks
 
     fig, ax = plt.subplots(figsize=(20, 10))
     plot_tree(
@@ -185,7 +188,7 @@ def plot_decision_tree(model, feature_names, save_path="decision_tree.png"):
 
 def run_polars_pipeline(path):
 
-    """Run the full EDA/filter/group-by pipeline with Polars; return elapsed time."""
+    # Run the full EDA/filter/group-by pipeline with Polars; return elapsed time
 
     start = time.perf_counter()
     df_pl = pl.read_csv(path)
@@ -199,7 +202,7 @@ def run_polars_pipeline(path):
 
 def run_pandas_pipeline(path):
 
-    """Run the full EDA/filter/group-by pipeline with Pandas; return elapsed time and df."""
+    # Run the full EDA/filter/group-by pipeline with Pandas; return elapsed time and df.
     start = time.perf_counter()
     df_pd = pd.read_csv(path)
     inspect_pandas(df_pd)

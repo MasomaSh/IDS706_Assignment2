@@ -116,3 +116,17 @@ def test_polars_and_pandas_filter_match():
     polars_result = filter_high_balance_polars(df_pl, 150000)
 
     assert len(pandas_result) == polars_result.height
+
+
+def test_full_churn_workflow():
+    df = pd.read_csv("Churn_Modelling.csv")
+    X, y = prepare_features(df)
+        
+    model, X_test, y_test, importances = train_decision_tree(X, y)
+        
+    predictions = model.predict(X_test)
+        
+    assert len(df) > 0
+    assert len(X) == len(y)
+    assert len(predictions) == len(y_test)
+    assert len(importances) == X.shape[1]
