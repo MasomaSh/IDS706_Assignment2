@@ -169,16 +169,16 @@ The main files in the repository are:
 
 Contains the main customer churn analysis. The script includes:
 
-Pandas data analysis
-Polars data analysis
-Data filtering
-Grouping and aggregation
-Feature preprocessing
-Decision Tree training
-Model evaluation
-Feature importance
-Data visualizations
-Pandas and Polars execution-time comparison
+- Pandas data analysis
+- Polars data analysis
+- Data filtering
+- Grouping and aggregation
+- Feature preprocessing
+- Decision Tree training
+- Model evaluation
+- Feature importance
+- Data visualizations
+- Pandas and Polars execution-time comparison
 
 ### test_churn_analysis.py
 Contains the unit and integration tests for the project.
@@ -195,4 +195,4 @@ The timing includes:
 - Checking missing values and duplicates
 - Filtering the data
 - Grouping and aggregating the data
-- Result: In the test run, Pandas was faster than Polars for the selected operations. This result should be interpreted only for this dataset and these operations. Performance can vary depending on dataset size, operations, hardware, and other factors. 
+Result: In the test run, Pandas was faster than Polars for the selected operations. This result should be interpreted only for this dataset and these operations. Performance can vary depending on dataset size, operations, hardware, and other factors. 
