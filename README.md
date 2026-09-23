@@ -183,7 +183,7 @@ Contains the main customer churn analysis. The script includes:
 ### test_churn_analysis.py
 Contains the unit and integration tests for the project.
 The tests check the behavior of the main data processing and machine learning functions and also include a full workflow test using the actual dataset.
-### rust_ownership.ipynb
+### rust_vs_python.ipynb
 Contains the Rust Jupyter notebook used to experiment with Rust ownership and mutability concepts. 
 
 # Performance Comparison

@@ -33,15 +33,13 @@ def test_churn_rate_by_geography():
     })
 
     result = churn_rate_by_geography_pandas(df)
-
     france_rate = result.loc["France", "churn_rate"]
-    germany_rate = result.loc["Germany", "churn_rate"]
 
+    germany_rate = result.loc["Germany", "churn_rate"]
     assert france_rate == 0.5
     assert germany_rate == 1.0
 
-
-    # Test 3: Feature preprocessing
+    # Test 3: feature preprocessing
 def test_prepare_features():
     df = pd.DataFrame({
         "RowNumber": [1, 2, 3],
@@ -89,7 +87,7 @@ def test_decision_tree_training():
     assert set(predictions).issubset({0, 1})
 
 
-    # Test 5: Edge case - no customers above threshold
+    # Test 5: Edge case: no customers above threshold
 def test_filter_high_balance_no_matches():
     df = pd.DataFrame({
         "CustomerId": [1, 2, 3],
@@ -101,7 +99,7 @@ def test_filter_high_balance_no_matches():
 
     assert len(result) == 0
 
-# Test 6 
+# Test 6: check Pandas and Polars functions return the same number of customers after filtering
 def test_polars_and_pandas_filter_match():
     data = {
         "CustomerId": [1, 2, 3, 4],
@@ -117,7 +115,7 @@ def test_polars_and_pandas_filter_match():
 
     assert len(pandas_result) == polars_result.height
 
-
+# Test 7: tests the entire churn prediction process
 def test_full_churn_workflow():
     df = pd.read_csv("Churn_Modelling.csv")
     X, y = prepare_features(df)
