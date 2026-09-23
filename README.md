@@ -202,3 +202,5 @@ Result: In the test run, Pandas was faster than Polars for the selected operatio
 The GitHub Actions workflow successfully runs all unit tests.
 
 ![Test Results](test_results.png)
+![Test Results](Test_file.png)
+
