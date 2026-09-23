@@ -196,3 +196,9 @@ The timing includes:
 - Filtering the data
 - Grouping and aggregating the data
 Result: In the test run, Pandas was faster than Polars for the selected operations. This result should be interpreted only for this dataset and these operations. Performance can vary depending on dataset size, operations, hardware, and other factors. 
+
+## Test Results
+
+The GitHub Actions workflow successfully runs all unit tests.
+
+![Test Results](test_results.png)
