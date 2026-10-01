@@ -129,3 +129,43 @@ def test_full_churn_workflow():
     assert len(X) == len(y)
     assert len(predictions) == len(y_test)
     assert len(importances) == X.shape[1]
+
+
+    # Test 8: empty DataFrame
+def test_empty_dataframe():
+    df = pd.DataFrame({
+        "CustomerId": [], "Geography": [], "Balance": [],
+    })
+
+    result = filter_high_balance_pandas(df, threshold=150000)
+
+    assert len(result) == 0
+
+
+# Test 9: single customer
+def test_single_customer():
+    df = pd.DataFrame({
+        "CustomerId": [1],
+        "Geography": ["France"],
+        "Balance": [200000],
+    })
+
+    result = filter_high_balance_pandas(df, threshold=150000)
+
+    assert len(result) == 1
+    assert result.iloc[0]["CustomerId"] == 1
+
+
+
+# Test 10: balance exactly equals threshold
+def test_at_threshold():
+    df = pd.DataFrame({
+        "CustomerId": [1, 2],
+        "Geography": ["France", "Germany"],
+        "Balance": [150000, 160000],
+    })
+
+    result = filter_high_balance_pandas(df, threshold=150000)
+
+    assert len(result) == 1
+    assert result.iloc[0]["Balance"] == 160000
