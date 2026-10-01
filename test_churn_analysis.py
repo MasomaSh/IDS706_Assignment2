@@ -1,15 +1,14 @@
-
 import pandas as pd
 import polars as pl
 
 from assignment2 import (
+    churn_rate_by_geography_pandas,
     filter_high_balance_pandas,
     filter_high_balance_polars,
-    churn_rate_by_geography_pandas,
-    churn_rate_by_geography_polars,
     prepare_features,
     train_decision_tree,
 )
+
 
 # Test 1: Data loading and filtering
 def test_filter_high_balance():
@@ -35,12 +34,13 @@ def test_churn_rate_by_geography():
 
     result = churn_rate_by_geography_pandas(df)
     france_rate = result.loc["France", "churn_rate"]
-
     germany_rate = result.loc["Germany", "churn_rate"]
+
     assert france_rate == 0.5
     assert germany_rate == 1.0
 
-    # Test 3: feature preprocessing
+
+# Test 3: Feature preprocessing
 def test_prepare_features():
     df = pd.DataFrame({
         "RowNumber": [1, 2, 3],
@@ -62,6 +62,7 @@ def test_prepare_features():
     assert len(X) == 3
     assert len(y) == 3
 
+
 # Test 4: Decision tree training and prediction
 def test_decision_tree_training():
     df = pd.DataFrame({
@@ -72,8 +73,10 @@ def test_decision_tree_training():
         "Geography": ["France", "Germany"] * 5,
         "Gender": ["Female", "Male"] * 5,
         "Age": [30, 45, 35, 55, 40, 28, 60, 33, 42, 50],
-        "Balance": [10000, 20000, 15000, 50000, 12000,
-                    18000, 60000, 11000, 25000, 45000],
+        "Balance": [
+            10000, 20000, 15000, 50000, 12000,
+            18000, 60000, 11000, 25000, 45000,
+        ],
         "Exited": [0, 1, 0, 1, 0, 0, 1, 0, 1, 1],
     })
 
@@ -88,7 +91,7 @@ def test_decision_tree_training():
     assert set(predictions).issubset({0, 1})
 
 
-    # Test 5: Edge case: no customers above threshold
+# Test 5: Edge case: no customers above threshold
 def test_filter_high_balance_no_matches():
     df = pd.DataFrame({
         "CustomerId": [1, 2, 3],
@@ -100,7 +103,8 @@ def test_filter_high_balance_no_matches():
 
     assert len(result) == 0
 
-# Test 6: check Pandas and Polars functions return the same number of customers after filtering
+
+# Test 6: Pandas and Polars filtering match
 def test_polars_and_pandas_filter_match():
     data = {
         "CustomerId": [1, 2, 3, 4],
@@ -116,25 +120,28 @@ def test_polars_and_pandas_filter_match():
 
     assert len(pandas_result) == polars_result.height
 
-# Test 7: tests the entire churn prediction process
+
+# Test 7: Full churn workflow
 def test_full_churn_workflow():
     df = pd.read_csv("Churn_Modelling.csv")
     X, y = prepare_features(df)
-        
+
     model, X_test, y_test, importances = train_decision_tree(X, y)
-        
+
     predictions = model.predict(X_test)
-        
+
     assert len(df) > 0
     assert len(X) == len(y)
     assert len(predictions) == len(y_test)
     assert len(importances) == X.shape[1]
 
 
-    # Test 8: empty DataFrame
+# Test 8: Edge case: empty DataFrame
 def test_empty_dataframe():
     df = pd.DataFrame({
-        "CustomerId": [], "Geography": [], "Balance": [],
+        "CustomerId": [],
+        "Geography": [],
+        "Balance": [],
     })
 
     result = filter_high_balance_pandas(df, threshold=150000)
@@ -142,7 +149,7 @@ def test_empty_dataframe():
     assert len(result) == 0
 
 
-# Test 9: single customer
+# Test 9: Edge case: single customer
 def test_single_customer():
     df = pd.DataFrame({
         "CustomerId": [1],
@@ -156,8 +163,7 @@ def test_single_customer():
     assert result.iloc[0]["CustomerId"] == 1
 
 
-
-# Test 10: balance exactly equals threshold
+# Test 10: Edge case: balance exactly equals threshold
 def test_at_threshold():
     df = pd.DataFrame({
         "CustomerId": [1, 2],

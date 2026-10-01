@@ -1,11 +1,11 @@
-
 import time
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
-import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 
 data = "Churn_Modelling.csv"
 
@@ -181,11 +181,13 @@ def run_pandas_pipeline(path):
 def main():
     polars_time = run_polars_pipeline(data)
     pandas_time, df_pandas = run_pandas_pipeline(data)
-  
+
+    print(f"\nPolars time: {polars_time:.6f} seconds")
+    print(f"Pandas time: {pandas_time:.6f} seconds")
 
     print("\n=== Decision Tree: Predicting Churn ===")
     X, y = prepare_features(df_pandas)
-    model, X_test, y_test, importances = train_decision_tree(X, y)
+    model, _, _, _ = train_decision_tree(X, y)
 
     print("\n=== Visualizations ===")
     plot_churn_by_age(df_pandas)
