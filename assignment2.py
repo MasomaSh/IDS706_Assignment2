@@ -176,6 +176,15 @@ def run_pandas_pipeline(path):
     print(f"Pandas pipeline time: {elapsed:.6f} seconds")
     return elapsed, df_pd
 
+def run_decision_tree_analysis(df_pandas):
+    print("\n=== Decision Tree: Predicting Churn ===")
+    X, y = prepare_features(df_pandas)
+    model, _, _, _ = train_decision_tree(X, y)
+
+    print("\n=== Visualizations ===")
+    plot_churn_by_age(df_pandas)
+    plot_decision_tree(model, X.columns)
+
 
 
 def main():
@@ -185,13 +194,7 @@ def main():
     print(f"\nPolars time: {polars_time:.6f} seconds")
     print(f"Pandas time: {pandas_time:.6f} seconds")
 
-    print("\n=== Decision Tree: Predicting Churn ===")
-    X, y = prepare_features(df_pandas)
-    model, _, _, _ = train_decision_tree(X, y)
-
-    print("\n=== Visualizations ===")
-    plot_churn_by_age(df_pandas)
-    plot_decision_tree(model, X.columns)
+    run_decision_tree_analysis(df_pandas)
 
 
 if __name__ == "__main__":
