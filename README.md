@@ -388,12 +388,5 @@ The GitHub Actions workflow successfully runs all unit tests.
 ![Test Results](Test_file.png)
 
 
-## Refactoring and Code Quality
 
-I refactored the project by extracting the decision tree analysis and visualization steps from `main()` into a separate `run_decision_tree_analysis()` function. This makes `main()` shorter and easier to read while keeping the same project goal and function.
 
-I verified the refactoring by running Ruff and the full test suite. Ruff reported no issues, and all 10 tests passed.
-
-### Refactoring Screenshot
-
-![Refactoring commit diff](refactor.png)
