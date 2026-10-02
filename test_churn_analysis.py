@@ -121,7 +121,7 @@ def test_polars_and_pandas_filter_match():
     assert len(pandas_result) == polars_result.height
 
 
-# Test 7: Full churn workflow
+# Test 7: Full churn workflow test
 def test_full_churn_workflow():
     df = pd.read_csv("Churn_Modelling.csv")
     X, y = prepare_features(df)
@@ -175,3 +175,7 @@ def test_at_threshold():
 
     assert len(result) == 1
     assert result.iloc[0]["Balance"] == 160000
+
+
+
+    
