@@ -10,7 +10,7 @@ from assignment2 import (
 )
 
 
-# Test 1: Data loading and filtering
+# Test 1: High-balance customer filtering
 def test_filter_high_balance():
     df = pd.DataFrame({
         "CustomerId": [1, 2, 3],
@@ -136,7 +136,7 @@ def test_full_churn_workflow():
     assert len(importances) == X.shape[1]
 
 
-# Test 8: Edge case: empty DataFrame
+# Test 8: Edge case: Empty DataFrame
 def test_empty_dataframe():
     df = pd.DataFrame({
         "CustomerId": [],
@@ -149,7 +149,7 @@ def test_empty_dataframe():
     assert len(result) == 0
 
 
-# Test 9: Edge case: single customer
+# Test 9: Edge case: Single customer
 def test_single_customer():
     df = pd.DataFrame({
         "CustomerId": [1],
@@ -163,7 +163,7 @@ def test_single_customer():
     assert result.iloc[0]["CustomerId"] == 1
 
 
-# Test 10: Edge case: balance exactly equals threshold
+# Test 10: Edge case: Balance exactly equals threshold
 def test_at_threshold():
     df = pd.DataFrame({
         "CustomerId": [1, 2],

@@ -33,7 +33,7 @@ def inspect_pandas(df):
     print(f"Number of null values:\n{df.isnull().sum()}")
     print(f"Number of duplicate rows: {df.duplicated().sum()}")
 
-# Filtering
+# Filtering     
 
 def filter_high_balance_polars(df, threshold):
 
